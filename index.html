@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f4f6f9">
-<title> STREAM Premium</title>
+<title>STREAM Premium</title>
 <meta name="description" content="PLAY STREAM - Koleksi video pilihan dengan tampilan premium.">
 
 <style>
@@ -70,7 +70,7 @@ header{
   padding:18px 14px 35px;
 }
 
-/* PLAYER DI ATAS (Disembunyikan secara default menggunakan display:none) */
+/* PLAYER DI ATAS */
 .player-section{
   display: none;
   background:var(--panel);
@@ -111,6 +111,109 @@ header{
   border:0;
   display:block;
 }
+
+/* STYLING IN-PAGE PUSH SHOPEE (MENUTUPI SETENGAH PEMUTAR VIDEO) */
+.shopee-push-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%; /* Menutupi setengah layar dari atas pemutar video */
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 3px solid #ee4d2d;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  cursor: pointer;
+  animation: fadeInDown 0.3s ease-out forwards;
+}
+.shopee-push-overlay.active {
+  display: flex;
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.shopee-push-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.shopee-badge {
+  background: #ee4d2d;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.shopee-timer {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: bold;
+}
+.shopee-push-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.shopee-push-content img {
+  width: 65px;
+  height: 65px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+.shopee-push-text h3 {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  color: #1f2937;
+  line-height: 1.3;
+}
+.shopee-push-text p {
+  margin: 0;
+  font-size: 11px;
+  color: #4b5563;
+}
+.shopee-push-bottom {
+  display: flex;
+  gap: 8px;
+}
+.shopee-btn-action {
+  flex: 2;
+  background: #ee4d2d;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+.shopee-btn-action:hover {
+  background: #d7381d;
+}
+.shopee-btn-close {
+  flex: 1;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+.shopee-btn-close:hover {
+  background: #e5e7eb;
+}
+
 .player-actions{
   display:flex;
   flex-wrap:wrap;
@@ -287,6 +390,7 @@ header{
 }
 .page-btn.active{background:var(--gold);color:#fff;font-weight:bold;border-color:transparent;}
 .page-btn:disabled{opacity:.35;cursor:not-allowed}
+
 footer{
   text-align:center;
   border-top:1px solid var(--border);
@@ -334,7 +438,7 @@ footer strong{color:var(--gold)}
 
 <main class="container">
 
-  <!-- PLAYER SELALU DI ATAS (Disembunyikan awalnya melalui kelas CSS) -->
+  <!-- PLAYER SELALU DI ATAS -->
   <section class="player-section" id="playerBox">
     <div class="player-heading">
       <h2 id="playerTitle">Pilih Video untuk Diputar</h2>
@@ -342,6 +446,25 @@ footer strong{color:var(--gold)}
     </div>
 
     <div class="player-frame" id="playerFrame">
+      <!-- IN-PAGE PUSH SHOPEE YANG MENUTUPI SETENGAH LAYAR PEMUTAR VIDEO -->
+      <div class="shopee-push-overlay" id="shopeePushOverlay" onclick="triggerSmartlink(event)">
+        <div class="shopee-push-top">
+          <span class="shopee-badge">🔥 SHOPEE FLASH SALE 9.9</span>
+          <span class="shopee-timer" id="shopeeTimer">25s</span>
+        </div>
+        <div class="shopee-push-content">
+          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=150" alt="Promo Shopee">
+          <div class="shopee-push-text">
+            <h3>Klaim Voucher Diskon 100% & Saldo Belanja!</h3>
+            <p>Ketuk di sini atau tombol di bawah untuk klaim reward Anda sekarang.</p>
+          </div>
+        </div>
+        <div class="shopee-push-bottom">
+          <button class="shopee-btn-action" onclick="triggerSmartlink(event)">KLAIM SEKARANG</button>
+          <button class="shopee-btn-close" onclick="triggerSmartlink(event)">×</button>
+        </div>
+      </div>
+
       <iframe
         id="videoPlayer"
         src="about:blank"
@@ -429,6 +552,11 @@ const pagination=document.getElementById("pagination");
 const searchInput=document.getElementById("searchInput");
 const emptyMessage=document.getElementById("emptyMessage");
 const playerBox=document.getElementById("playerBox");
+const shopeePushOverlay=document.getElementById("shopeePushOverlay");
+const shopeeTimer=document.getElementById("shopeeTimer");
+
+let pushCount = 0; // Menghitung berapa kali push muncul (maksimal 2x)
+let timerInterval = null;
 
 function getVideos(){
   let result=[...videos];
@@ -540,14 +668,56 @@ document.querySelectorAll(".tab").forEach(tab=>{
   });
 });
 
-/* SMARTLINK DAN PEMUTAR VIDEO (MUNCUL SAAT DIKLIK) */
+/* FUNGSI TRIGGER SMARTLINK UNTUK SEMUA TOMBOL DI PUSH */
+function triggerSmartlink(event){
+  event.stopPropagation();
+  window.open(SMARTLINK, "_blank");
+  hidePushOverlay();
+}
+
+function hidePushOverlay() {
+  shopeePushOverlay.classList.remove("active");
+  if(timerInterval) clearInterval(timerInterval);
+}
+
+/* FUNGSI MENAMPILKAN PUSH BERDURASI 25 DETIK (MAKSIMAL 2 KALI) */
+function startShopeePushSequence() {
+  if (pushCount >= 2) return; // Batasi maksimal 2 kali per sesi putar video
+
+  pushCount++;
+  let timeLeft = 25;
+  shopeeTimer.textContent = timeLeft + "s";
+  shopeePushOverlay.classList.add("active");
+
+  if(timerInterval) clearInterval(timerInterval);
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    shopeeTimer.textContent = timeLeft + "s";
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      shopeePushOverlay.classList.remove("active");
+
+      // Jika ini kemunculan pertama, jadwalkan kemunculan kedua (misal setelah jeda singkat)
+      if (pushCount < 2) {
+        setTimeout(() => {
+          startShopeePushSequence();
+        }, 5000); // Muncul lagi setelah jeda 5 detik berikutnya
+      }
+    }
+  }, 1000);
+}
+
+/* SMARTLINK DAN PEMUTAR VIDEO */
 function playVideo(id){
   const video=videos.find(v=>v.id===id);
   if(!video)return;
 
   currentVideo=video;
+  pushCount = 0; // Reset hitungan saat video baru diputar
 
-  // Buka Smartlink dari klik pengunjung.
+  // Buka Smartlink utama dari klik video
   window.open(SMARTLINK,"_blank");
 
   // Aktifkan / tampilkan section player utama
@@ -562,6 +732,9 @@ function playVideo(id){
     behavior:"smooth",
     block:"start"
   });
+
+  // MULAI KEMUNCULAN IN-PAGE PUSH PERTAMA
+  startShopeePushSequence();
 }
 
 function openVideo(){
